@@ -1,35 +1,28 @@
 # RetailMax
 E-Commerce Monolith Cloud Migration Platform
 
-**Objective:**
+**Problem Definition:**
 
-To modernize and optimize RetailMax’s legacy e-commerce system by migrating its monolithic application architecture to a cloud-native infrastructure. The project aims to improve release efficiency, ensure application scalability, minimize downtime, and introduce automated monitoring, thereby enhancing the overall system reliability and maintainability.
+RetailMax, a prominent online retailer, operates a legacy monolithic e-commerce application that faces several operational and developmental challenges:
+•Manual Deployments: Every update (product catalog, cart, checkout) requires manual deployment and configuration of servers, leading to delays and inconsistencies.
 
-**Background:**
+•Downtime During Releases: Frequent unplanned downtime during high-traffic sales events causes loss of revenue and poor customer experience.
 
-RetailMax, an established online retail platform, currently relies on a manually deployed monolithic architecture. Every update—whether in the product catalog, cart, or checkout flow—requires time-consuming, error-prone processes involving manual server configuration and deployment. This leads to:
-	•	Downtime during peak traffic events
-	•	Delayed feature rollouts
-	•	Inconsistent deployment environments
-	•	Lack of real-time performance monitoring
+•Slow Release Cycles: The lack of automation leads to slow, error-prone release cycles and delayed feature rollouts.
 
-**Scope of the Project:**
+•Limited Scalability and Visibility: Their existing infrastructure lacks the ability to scale automatically and provides minimal visibility into application performance.
 
-The solution focuses on end-to-end modernization, which includes:
-	1.	Cloud Infrastructure Provisioning using Terraform for scalable and repeatable AWS resource setup (VPC, EC2/ECS).
-	2.	Application Containerization using Docker to encapsulate the entire monolithic app.
-	3.	CI/CD Pipeline Implementation with Jenkins, enabling automatic building, testing, and deployment from GitHub.
-	4.	Server Configuration Management with Ansible to automate software setup and app deployment.
-	5.	Real-time Monitoring and Visualization using Prometheus and Grafana for tracking resource usage and application interactions.
+These issues severely impact RetailMax’s agility, reliability, and ability to compete in a fast-paced e-commerce environment.
 
-**Expected Outcomes:**
+ **Project Objective:**
 
-	•	Fully automated and repeatable cloud deployments
+To modernize RetailMax’s monolithic e-commerce platform by migrating it to the cloud and establishing an automated, resilient DevOps workflow that ensures:
 
-	•	Zero-downtime releases
- 
-	•	Improved deployment frequency and rollback safety
- 
-	•	Real-time metrics and alerting dashboards
- 
-	•	Clear documentation, Team collaboration, and DevOps pipeline demonstration
+1.	Reliable Cloud Infrastructure: Provision consistent AWS infrastructure (VPC, EC2, security groups) using Terraform.
+2.	Application Portability: Containerize the monolithic application using Docker for environment consistency and portability.
+3.	Automated CI/CD: Implement a Jenkins pipeline to automate building, testing, and deployment processes to AWS.
+4.	Configuration Management: Use Ansible to automate configuration of servers and deployment of containers.
+5.	Zero-Downtime Releases: Enable blue-green or rolling deployments to ensure uninterrupted service during updates.
+6.	Performance Monitoring: Integrate Prometheus and Grafana to provide real-time monitoring and observability into application health and system resources.
+
+**Ultimately, the solution should allow faster, safer, and scalable deployments, reduce manual effort, minimize downtime, and provide actionable insights—enhancing RetailMax’s overall operational efficiency and customer experience**
