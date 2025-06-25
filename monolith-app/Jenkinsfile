@@ -6,12 +6,13 @@ pipeline {
         IMAGE_TAG = "build-${BUILD_NUMBER}"
     }
 
-    stages {
-        stage('Checkout Code') {
-            steps {
-                git credentialsId: 'b2c3e09b-26e7-4572-b583-c4cbd70387c4', url: 'https://github.com/adityatomar25/RetailMax.git'
-            }
-        }
+    stage('Checkout Code') {
+    steps {
+        git branch: 'main',
+            credentialsId: 'b2c3e09b-26e7-4572-b583-c4cbd70387c4',
+            url: 'https://github.com/adityatomar25/RetailMax.git'
+    }
+}
 
         stage('Install Dependencies') {
             steps {
