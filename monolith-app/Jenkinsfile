@@ -1,11 +1,69 @@
 pipeline {
     agent any
 
+    environment {
+        IMAGE_NAME = 'adityatomar25/retailmax-monolith'
+        IMAGE_TAG = "build-${BUILD_NUMBER}"
+    }
+
     stages {
-        stage('Hello') {
+        stage('Checkout Code') {
             steps {
-                echo '🚀 Hello from Jenkinsfile!'
+                git credentialsId: 'b2c3e09b-26e7-4572-b583-c4cbd70387c4', url: 'https://github.com/adityatomar25/RetailMax.git'
             }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                dir('backend') {
+                    sh 'npm install'
+                }
+            }
+        }
+
+        stage('Run Unit Tests') {
+            steps {
+                dir('backend') {
+                    sh 'npm test'
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
+            }
+        }
+
+        stage('Scan Docker Image (Trivy)') {
+            steps {
+                sh "trivy image ${IMAGE_NAME}:${IMAGE_TAG} || true"
+            }
+        }
+
+        stage('Push to DockerHub') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh """
+                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                        docker push ${IMAGE_NAME}:${IMAGE_TAG}
+                        docker logout
+                    """
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            mail to: 'adityatomar0025@gmail.com',
+                 subject: "Build #${BUILD_NUMBER} Passed",
+                 body: "Image pushed: ${IMAGE_NAME}:${IMAGE_TAG}\nCheck: ${env.BUILD_URL}"
+        }
+        failure {
+            mail to: 'adityatomar0025@gmail.com',
+                 subject: "Build #${BUILD_NUMBER} Failed",
+                 body: "Check logs at: ${env.BUILD_URL}"
         }
     }
 }
