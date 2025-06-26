@@ -12,4 +12,4 @@ describe('GET /api/products', () => {
       expect(res.body[0]).toHaveProperty('price');
     }
   });
-});
+});   
