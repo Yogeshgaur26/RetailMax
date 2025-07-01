@@ -1,2 +1,3 @@
 #!/bin/bash
-ansible-playbook -i ansible-retailmax/inventory ansible-retailmax/playbook.yml
+
+ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i inventory playbook.yml
