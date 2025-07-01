@@ -11,12 +11,6 @@ COPY backend/package.json backend/package-lock.json* ./backend/
 WORKDIR /app/backend
 RUN npm install
 
-# Copy and install frontend dependencies, then build frontend
-WORKDIR /app
-COPY frontend/package*.json ./frontend/
-WORKDIR /app/frontend
-RUN npm install && npm run build
-
 # Go back and copy everything else (without local node_modules!)
 WORKDIR /app
 COPY backend ./backend
