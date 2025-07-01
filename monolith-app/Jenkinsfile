@@ -62,7 +62,7 @@ pipeline {
             steps {
                 echo 'Deploying with Ansible...'
                 sh 'chmod +x ansible-retailmax/deploy.sh'
-                sh './ansible-retailmax/deploy.sh'
+                sh './ansible-retailmax && ./deploy.sh'
             }
         }
     

@@ -1,3 +1,2 @@
 #!/bin/bash
-
-ansible-playbook -i inventory playbook.yml
+ansible-playbook -i ansible-retailmax/inventory ansible-retailmax/playbook.yml
