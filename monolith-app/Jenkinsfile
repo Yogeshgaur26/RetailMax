@@ -72,3 +72,10 @@ pipeline {
         }
     }
 }
+        stage('Deploy via Ansible') {
+            steps {
+                dir('ansible-retailmax') {
+                    sh './deploy.sh'
+                }
+            }
+        }
