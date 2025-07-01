@@ -57,25 +57,45 @@ pipeline {
                 }
             }
         }
-    }
-
-    post {
-        success {
-            mail to: 'adityatomar0025@gmail.com',
-                 subject: "Build #${BUILD_NUMBER} Passed",
-                 body: "Image pushed: ${IMAGE_NAME}:${IMAGE_TAG}\nCheck: ${env.BUILD_URL}"
-        }
-        failure {
-            mail to: 'adityatomar0025@gmail.com',
-                 subject: "Build #${BUILD_NUMBER} Failed",
-                 body: "Check logs at: ${env.BUILD_URL}"
-        }
-    }
-}
+    
         stage('Deploy via Ansible') {
             steps {
-                dir('ansible-retailmax') {
-                    sh './deploy.sh'
-                }
+                echo 'Deploying with Ansible...'
+                sh 'chmod +x ansible-retailmax/deploy.sh'
+                sh './ansible-retailmax/deploy.sh'
             }
         }
+    
+    }
+
+
+    post {
+    success {
+        mail to: 'adityatomar0025@gmail.com',
+             subject: "RetailMax Build & Deployment Success - Build #${BUILD_NUMBER}",
+             body: """
+ Deployment Successful!
+
+Docker Image: ${IMAGE_NAME}:${IMAGE_TAG}
+Jenkins Build URL: ${env.BUILD_URL}
+Ansible deployment executed successfully.
+
+RetailMax CI/CD
+"""
+    }
+
+    failure {
+        mail to: 'adityatomar0025@gmail.com',
+             subject: "RetailMax Build or Deployment Failed - Build #${BUILD_NUMBER}",
+             body: """
+ Something went wrong during Build or Deployment.
+
+Check Jenkins logs for details:
+${env.BUILD_URL}
+
+ RetailMax CI/CD
+"""
+    }
+}
+}
+        
