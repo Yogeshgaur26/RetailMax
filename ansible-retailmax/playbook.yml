@@ -1,4 +1,13 @@
 
+- name: Deploy RetailMax Monolith App
+  hosts: app
+  become: true
+  vars:
+    image_name: adityatomar25/retailmax-monolith
+    container_name: retailmax
+    host_port: 3001
+    container_port: 3000
+    email_recipient: adityatomar0025@gmail.com
 
   tasks:
     - name: Stop and remove existing container (if any)
