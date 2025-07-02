@@ -113,18 +113,22 @@
       cart[id] = (cart[id] || 0) + change;
       if (cart[id] <= 0) delete cart[id];
       localStorage.setItem('cart', JSON.stringify(cart));
+      fetch('/api/click', { method: 'POST' });
       location.reload();
+      
     }
 
     function removeItem(id) {
       delete cart[id];
       localStorage.setItem('cart', JSON.stringify(cart));
+      fetch('/api/click', { method: 'POST' });
       location.reload();
     }
 
     function checkout() {
       alert("Checkout complete!!!");
       localStorage.removeItem('cart');
+      fetch('/api/click', { method: 'POST' });
       window.location.href = "index.html";
     }
   </script>

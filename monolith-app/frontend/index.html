@@ -125,6 +125,7 @@
         window.updateQty = (id, delta) => {
           cart[id] = (cart[id] || 0) + delta;
           if (cart[id] <= 0) delete cart[id];
+          fetch('/api/click', { method: 'POST' });
           render();
         };
 
