@@ -1,7 +1,8 @@
-
+---
 - name: Deploy RetailMax Monolith App
   hosts: app
   become: true
+
   vars:
     image_name: adityatomar25/retailmax-monolith
     container_name: retailmax
@@ -45,9 +46,8 @@
         - name: Send email notification for rollback
           shell: |
             echo "Rollback triggered on {{ inventory_hostname }}: backup image started due to deployment failure." | mail -s "RetailMax Rollback Triggered" {{ email_recipient }}
-       - name: Send success email notification
-        when: run_output.rc == 0
-          shell: |
-          echo "RetailMax deployed successfully on {{ inventory_hostname }} using {{ image_name }}:latest" | mail -s "RetailMax Deployment Success" {{ email_recipient }}
 
-
+    - name: Send success email notification
+      when: run_output.rc == 0
+      shell: |
+        echo "RetailMax deployed successfully on {{ inventory_hostname }} using {{ image_name }}:latest" | mail -s "RetailMax Deployment Success" {{ email_recipient }}
