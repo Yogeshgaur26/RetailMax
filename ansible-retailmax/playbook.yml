@@ -12,6 +12,18 @@
     docker_network: retailmax-net
 
   tasks:
+    - name: Install pip3
+      apt:
+        name: python3-pip
+        state: present
+      become: true
+
+    - name: Install Docker SDK for Python
+      pip:
+        name: docker
+        executable: pip3
+      become: true
+
     - name: Create Docker network
       docker_network:
         name: "{{ docker_network }}"
@@ -29,18 +41,8 @@
     - name: Pull latest Docker image from DockerHub
       shell: docker pull {{ image_name }}:latest
 
-    - name: Install pip3
-      apt:
-        name: python3-pip
-        state: present
-      become: true
+    
 
-    - name: Install Docker SDK for Python
-      pip:
-        name: docker
-        executable: pip3
-      become: true
-      
     - name: Run RetailMax container
       docker_container:
         name: "{{ container_name }}"
