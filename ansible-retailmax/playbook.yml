@@ -9,6 +9,7 @@
     host_port: 3001
     container_port: 3000
     email_recipient: adityatomar0025@gmail.com
+    docker_network: retailmax-net
 
   tasks:
     - name: Create Docker network
@@ -29,17 +30,17 @@
       shell: docker pull {{ image_name }}:latest
 
     - name: Run RetailMax container
-  docker_container:
-    name: "{{ container_name }}"
-    image: "{{ image_name }}:latest"
-    state: started
-    restart_policy: always
-    published_ports:
-      - "{{ host_port }}:{{ container_port }}"
-    networks:
-      - name: "{{ docker_network }}"
-  register: run_output
-  ignore_errors: yes
+      docker_container:
+        name: "{{ container_name }}"
+        image: "{{ image_name }}:latest"
+        state: started
+        restart_policy: always
+        published_ports:
+          - "{{ host_port }}:{{ container_port }}"
+        networks:
+          - name: "{{ docker_network }}"
+      register: run_output
+      ignore_errors: yes
 
     - name: Rollback to backup image if latest deployment failed
       when: run_output.rc != 0
@@ -62,12 +63,12 @@
       shell: |
         echo "RetailMax deployed successfully on {{ inventory_hostname }} using {{ image_name }}:latest" | mail -s "RetailMax Deployment Success" {{ email_recipient }}
 
-
-#Prometheus and Grafana
+    # Prometheus and Grafana Setup
     - name: Ensure Prometheus config folder exists
       file:
         path: /opt/prometheus
         state: directory
+
     - name: Copy Prometheus config
       copy:
         dest: /opt/prometheus/prometheus.yml
@@ -78,6 +79,7 @@
             - job_name: 'retailmax'
               static_configs:
                 - targets: ['{{ container_name }}:{{ container_port }}']
+
     - name: Run Prometheus container
       docker_container:
         name: prometheus
@@ -89,7 +91,8 @@
         volumes:
           - /opt/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
         networks:
-          - name: "{{ docker_network }}"                
+          - name: "{{ docker_network }}"
+
     - name: Run Grafana container
       docker_container:
         name: grafana
@@ -99,4 +102,4 @@
         published_ports:
           - "3002:3000"
         networks:
-          - name: "{{ docker_network }}"      
+          - name: "{{ docker_network }}"
