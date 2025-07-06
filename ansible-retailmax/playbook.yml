@@ -11,6 +11,11 @@
     email_recipient: adityatomar0025@gmail.com
 
   tasks:
+    - name: Create Docker network
+      docker_network:
+        name: "{{ docker_network }}"
+        state: present
+
     - name: Stop and remove existing container (if any)
       shell: |
         docker stop {{ container_name }} || true
@@ -23,13 +28,18 @@
     - name: Pull latest Docker image from DockerHub
       shell: docker pull {{ image_name }}:latest
 
-    - name: Run Docker container
-      shell: |
-        docker run -d --name {{ container_name }} \
-        -p {{ host_port }}:{{ container_port }} \
-        {{ image_name }}:latest
-      register: run_output
-      ignore_errors: yes
+    - name: Run RetailMax container
+  docker_container:
+    name: "{{ container_name }}"
+    image: "{{ image_name }}:latest"
+    state: started
+    restart_policy: always
+    published_ports:
+      - "{{ host_port }}:{{ container_port }}"
+    networks:
+      - name: "{{ docker_network }}"
+  register: run_output
+  ignore_errors: yes
 
     - name: Rollback to backup image if latest deployment failed
       when: run_output.rc != 0
@@ -51,3 +61,42 @@
       when: run_output.rc == 0
       shell: |
         echo "RetailMax deployed successfully on {{ inventory_hostname }} using {{ image_name }}:latest" | mail -s "RetailMax Deployment Success" {{ email_recipient }}
+
+
+#Prometheus and Grafana
+    - name: Ensure Prometheus config folder exists
+      file:
+        path: /opt/prometheus
+        state: directory
+    - name: Copy Prometheus config
+      copy:
+        dest: /opt/prometheus/prometheus.yml
+        content: |
+          global:
+            scrape_interval: 15s
+          scrape_configs:
+            - job_name: 'retailmax'
+              static_configs:
+                - targets: ['{{ container_name }}:{{ container_port }}']
+    - name: Run Prometheus container
+      docker_container:
+        name: prometheus
+        image: prom/prometheus
+        state: started
+        restart_policy: always
+        published_ports:
+          - "9090:9090"
+        volumes:
+          - /opt/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+        networks:
+          - name: "{{ docker_network }}"                
+    - name: Run Grafana container
+      docker_container:
+        name: grafana
+        image: grafana/grafana
+        state: started
+        restart_policy: always
+        published_ports:
+          - "3002:3000"
+        networks:
+          - name: "{{ docker_network }}"      
