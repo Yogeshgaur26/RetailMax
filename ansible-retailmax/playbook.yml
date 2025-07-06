@@ -57,7 +57,7 @@
       ignore_errors: yes
 
     - name: Rollback to backup image if latest deployment failed
-      when: run_output.rc != 0
+      when: run_output is failed
       block:
         - name: Remove failed container (if any)
           shell: docker rm -f {{ container_name }} || true
